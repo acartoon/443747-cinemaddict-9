@@ -9,7 +9,7 @@ import {filmDtailsTemplate} from './components/film-details.js';
 
 const CARDS_LENGTH = 5;
 const CARDS_LENGTH_EXTRA = 2;
-const titlesArr = ['Top rated', 'Most commented'];
+const titlesArr = [`Top rated`, `Most commented`];
 
 function render(container, template, type = `beforeend`) {
   container.insertAdjacentHTML(type, template);
@@ -17,17 +17,17 @@ function render(container, template, type = `beforeend`) {
 
 const headerContainer = document.body.querySelector(`.header`);
 
-//search
+// search
 render(headerContainer, searchTemplate());
 
-//profile
+// profile
 const profileContainer = document.createElement(`section`);
 profileContainer.classList.add(`header__profile`, `profile`);
 
 render(headerContainer, profileContainer.outerHTML);
 render(headerContainer.querySelector(`.header__profile.profile`), profileTemplate());
 
-//nav
+// nav
 const mainContainer = document.body.querySelector(`.main`);
 const navContainer = document.createElement(`nav`);
 navContainer.classList.add(`main-navigation`);
@@ -67,7 +67,7 @@ const filmsListExtra = document.createElement(`section`);
 filmsListExtra.classList.add(`films-list--extra`);
 
 for (let i = 0; i < CARDS_LENGTH_EXTRA; i++) {
-  render(mainContainer.querySelector(`.films`), filmsListExtra.outerHTML)
+  render(mainContainer.querySelector(`.films`), filmsListExtra.outerHTML);
 }
 
 const filmsListTitle = document.createElement(`h2`);
@@ -75,18 +75,18 @@ filmsListTitle.classList.add(`films-list__title`);
 
 let filmsListExtraContainer = mainContainer.querySelectorAll(`.films-list--extra`);
 
-filmsListExtraContainer.forEach(function(item, i) {
+filmsListExtraContainer.forEach((item, i) => {
   render(item, filmsListTitle.outerHTML);
-  item.querySelector('.films-list__title').innerHTML = titlesArr[i];
-  
+  item.querySelector(`.films-list__title`).innerHTML = titlesArr[i];
+
   render(item, filmsListContainer.outerHTML);
-  
-  for (let i = 0; i < CARDS_LENGTH_EXTRA; i++) {
+
+  for (let a = 0; a < CARDS_LENGTH_EXTRA; a++) {
     render(item.querySelector(`.films-list__container`), filmCardTemplate());
   }
 });
 
-//popap
+// popap
 const bodyContainer = document.body;
 
 render(bodyContainer, filmDtailsTemplate());
