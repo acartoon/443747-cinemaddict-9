@@ -1,6 +1,5 @@
-export const filmCardTemplate = () => {
-  return `
-  <article class="film-card">
+export const filmCardTemplate = () =>
+  `<article class="film-card">
           <h3 class="film-card__title">Popeye the Sailor Meets Sindbad the Sailor</h3>
           <p class="film-card__rating">6.3</p>
           <p class="film-card__info">
@@ -16,6 +15,4 @@ export const filmCardTemplate = () => {
             <button class="film-card__controls-item button film-card__controls-item--mark-as-watched film-card__controls-item--active">Mark as watched</button>
             <button class="film-card__controls-item button film-card__controls-item--favorite film-card__controls-item--active">Mark as favorite</button>
           </form>
-        </article>
-  `
-}
+        </article>`;

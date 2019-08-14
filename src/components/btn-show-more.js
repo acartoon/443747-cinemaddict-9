@@ -1,5 +1,2 @@
-export const btnShowMoreTemplate = () => {
-  return `
-  <button class="films-list__show-more">Show more</button>
-  `
-}
+export const btnShowMoreTemplate = () =>
+  `<button class="films-list__show-more">Show more</button>`;
