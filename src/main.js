@@ -1,102 +1,149 @@
-import {searchTemplate} from './components/search.js';
-import {profileTemplate} from './components/profile.js';
-import {filtersTemplate} from './components/filters.js';
-import {statsTemplate} from './components/stats.js';
-import {sortTemplate} from './components/sort.js';
-import {filmCardTemplate} from './components/film-card.js';
-import {btnShowMoreTemplate} from './components/btn-show-more.js';
-import {filmDtailsTemplate} from './components/film-details.js';
-import {films, filters, titles, countWatched} from './data.js';
+import {
+  FilmDetails
+} from './components/film-details';
+import {
+  Film
+} from './components/film';
+import {
+  searchTemplate
+} from './components/search';
+import {
+  profileTemplate
+} from './components/profile';
+import {
+  filtersTemplate
+} from './components/filters';
+import {
+  statsTemplate
+} from './components/stats';
+import {
+  sortTemplate
+} from './components/sort';
+import {
+  btnShowMoreTemplate
+} from './components/btn-show-more';
+import {
+  films,
+  filters,
+  titles,
+  countWatched
+} from './data';
+import {
+  render,
+  Position,
+  unrender
+} from './utils';
 
 const CARDS_LENGTH_EXTRA = 2;
+const MAX_TASKS_TO_RENDER = 5;
 const headerContainer = document.body.querySelector(`.header`);
 const mainContainer = document.body.querySelector(`.main`);
 
-function render(container, template, type = `beforeend`) {
+const renderFilm = (filmMock, container) => {
+  const film = new Film(filmMock);
+  const filmDetails = new FilmDetails(filmMock);
+
+  const renderFilmDetails = () => {
+    render(mainContainer, filmDetails.getElement(), Position.BEFOREEND);
+    film.removeElement();
+  };
+
+  film.getElement()
+    .querySelector(`.film-card__poster`)
+    .addEventListener(`click`, renderFilmDetails);
+
+  film.getElement()
+    .querySelector(`.film-card__title`)
+    .addEventListener(`click`, renderFilmDetails);
+
+  film.getElement()
+    .querySelector(`.film-card__comments`)
+    .addEventListener(`click`, renderFilmDetails);
+
+  filmDetails.getElement()
+    .querySelector(`.film-details__close-btn`)
+    .addEventListener(`click`, () => {
+      unrender(filmDetails.getElement());
+    });
+
+  render(container, film.getElement(), Position.BEFOREEND);
+};
+
+const renderComponent = (container, template, type = `beforeend`) => {
   container.insertAdjacentHTML(type, template);
-}
+};
 
 const renderFilters = () => mainContainer.querySelector(`.main-navigation`)
-.insertAdjacentHTML(`afterBegin`, filters.map(filtersTemplate).join(``));
+  .insertAdjacentHTML(`afterBegin`, filters.map(filtersTemplate).join(``));
 
-const renderFilms = (container, start, end) => {
-  container.insertAdjacentHTML(`beforeend`, films.map(filmCardTemplate).slice(start, end).join(``));
-};
-
-const renderFilmsDetails = (container) => {
-  container.insertAdjacentHTML(`beforeend`, filmDtailsTemplate(films[5]));
-};
-
-// search
-render(headerContainer, searchTemplate());
-
-// profile
 const profileContainer = document.createElement(`section`);
 profileContainer.classList.add(`header__profile`, `profile`);
-
-render(headerContainer, profileContainer.outerHTML);
-render(headerContainer.querySelector(`.header__profile.profile`), profileTemplate(countWatched));
-
 // nav
 const navContainer = document.createElement(`nav`);
 navContainer.classList.add(`main-navigation`);
-
-render(mainContainer, navContainer.outerHTML);
-render(mainContainer.querySelector(`.main-navigation`), statsTemplate());
-renderFilters();
-render(mainContainer, sortTemplate());
-
 // filmsContainer
 const filmsContainer = document.createElement(`section`);
 filmsContainer.classList.add(`films`);
-
-render(mainContainer, filmsContainer.outerHTML);
-
 // filmsList
 const filmsList = document.createElement(`section`);
 filmsList.classList.add(`films-list`);
-
-render(mainContainer.querySelector(`.films`), filmsList.outerHTML);
-
 // filmsListContainer
 const filmsListContainer = document.createElement(`div`);
 filmsListContainer.classList.add(`films-list__container`);
-
-render(mainContainer.querySelector(`.films-list`), filmsListContainer.outerHTML);
-
-// renderFilms
-renderFilms(mainContainer.querySelector(`.films-list .films-list__container`), 0, 10);
-
 // filmsListExtra
 const filmsListExtra = document.createElement(`section`);
 filmsListExtra.classList.add(`films-list--extra`);
-
-for (let i = 0; i < CARDS_LENGTH_EXTRA; i++) {
-  render(mainContainer.querySelector(`.films`), filmsListExtra.outerHTML);
-}
-
+// title
 const filmsListTitle = document.createElement(`h2`);
 filmsListTitle.classList.add(`films-list__title`);
+
+renderComponent(headerContainer, searchTemplate());
+renderComponent(headerContainer, profileContainer.outerHTML);
+renderComponent(headerContainer.querySelector(`.header__profile.profile`), profileTemplate(countWatched));
+renderComponent(mainContainer, navContainer.outerHTML);
+renderComponent(mainContainer.querySelector(`.main-navigation`), statsTemplate());
+renderComponent(mainContainer, sortTemplate());
+renderComponent(mainContainer, filmsContainer.outerHTML);
+renderComponent(mainContainer.querySelector(`.films`), filmsList.outerHTML);
+renderComponent(mainContainer.querySelector(`.films-list`), filmsListContainer.outerHTML);
+renderComponent(mainContainer.querySelector(`.films-list`), btnShowMoreTemplate());
+renderFilters();
+
+for (let i = 0; i < CARDS_LENGTH_EXTRA; i++) {
+  renderComponent(mainContainer.querySelector(`.films`), filmsListExtra.outerHTML);
+}
 
 let filmsListExtraContainer = mainContainer.querySelectorAll(`.films-list--extra`);
 
 filmsListExtraContainer.forEach((item, i) => {
-  render(item, filmsListTitle.outerHTML);
+  renderComponent(item, filmsListTitle.outerHTML);
   item.querySelector(`.films-list__title`).innerHTML = titles[i];
 
-  render(item, filmsListContainer.outerHTML);
-  renderFilms(item.querySelector(`.films-list__container`), 0, 2);
+  renderComponent(item, filmsListContainer.outerHTML);
+  films.slice(0, CARDS_LENGTH_EXTRA).forEach((film) => renderFilm(film, item.querySelector(`.films-list__container`)));
 });
 
-// popap
-renderFilmsDetails(mainContainer);
+// renderFilms
+const filmsRenderContainer = mainContainer.querySelector(`.films-list__container`);
+films.slice(0, MAX_TASKS_TO_RENDER).forEach((film) => renderFilm(film, filmsRenderContainer));
 
 // btn
-render(mainContainer.querySelector(`.films-list`), btnShowMoreTemplate());
-
 const btnShowMore = mainContainer.querySelector(`.films-list__show-more`);
-btnShowMore.addEventListener(`click`, (e) => {
-  e.preventDefault();
-  renderFilms(mainContainer.querySelector(`.films-list .films-list__container`), 10, 15);
-  btnShowMore.style.display = `none`;
-});
+
+let filmsRenderedCount = films.length < MAX_TASKS_TO_RENDER ? films.length : MAX_TASKS_TO_RENDER;
+let filmsToRenderCount = films.length - filmsRenderedCount;
+
+const onLoadMoreButtonClick = () => {
+  const filmsToRender = films.slice(filmsRenderedCount, filmsRenderedCount + MAX_TASKS_TO_RENDER);
+  filmsToRender.forEach((film) => renderFilm(film, filmsRenderContainer));
+
+  filmsRenderedCount += MAX_TASKS_TO_RENDER;
+  filmsToRenderCount = films.length - filmsRenderedCount;
+
+  if (filmsToRenderCount <= 0) {
+    btnShowMore.classList.add(`visually-hidden`);
+    btnShowMore.removeEventListener(`click`, onLoadMoreButtonClick);
+  }
+};
+
+btnShowMore.addEventListener(`click`, onLoadMoreButtonClick);

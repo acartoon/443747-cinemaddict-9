@@ -9,7 +9,7 @@ import {
   getCountWatchlist,
   getCountFavorite,
   getCountwatched
-} from './functions.js';
+} from './utils.js';
 
 const namesFilm = new Set([
   `Здравствуйте, я Ваша тетя`,
