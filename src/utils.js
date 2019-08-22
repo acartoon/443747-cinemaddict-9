@@ -29,3 +29,32 @@ export const getCountwatched = (item) => item.watched ? true : false;
 export const counterFilters = (array, func) => {
   return array.reduce((total, x) => (func(x) ? total + 1 : total), 0);
 };
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
+};
+
+export const Position = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+};
+
+export const render = (container, element, place) => {
+  switch (place) {
+    case Position.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case Position.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+
+export const unrender = (element) => {
+  if (element) {
+    element.remove();
+  }
+};
