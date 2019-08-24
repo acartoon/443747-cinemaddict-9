@@ -74,9 +74,8 @@ const film = () => ({
 });
 
 const titles = [`Top rated`, `Most commented`];
-const filmslength = Array.from(namesFilm).length;
-
-const films = new Array(filmslength).fill(``).map(film);
+const films = new Array(Array.from(namesFilm).length).fill(``).map(film);
+const filmslength = films.length;
 const countWatched = counterFilters(films, getCountwatched);
 
 const filters = [
