@@ -22,10 +22,8 @@ export class Film {
     }
     return this._element;
   }
-
-  // 
   removeElement() {
-    if (!this._element) {
+    if (this._element) {
       this._element = null;
     }
     return this._element;
