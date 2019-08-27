@@ -9,10 +9,9 @@ export const getRandomTime = () => {
   return `${Math.floor(munute / 60)} h ${Math.floor(munute % 60)} m`;
 };
 
-export const descriptionFilm = (description) => {
-  let descr = getRandomElements(description.split(`. `), getrandomInteger(3, 1)).join(`. `);
-  return descr.length < 140 ? descr : `${description.slice(0, 139).trim()}…`;
-};
+export const descriptionFilm = (description) => `${getRandomElements(description.split(`. `), getrandomInteger(3, 1)).join(`. `)}.`;
+
+export const descriptionTrim = (description) => description.length < 140 ? description : `${description.slice(0, 139).trim()}…`;
 
 export function getRandomDate() {
   let randomYear = getrandomInteger(1930, 1990);

@@ -1,56 +1,16 @@
-import {createElement} from '../utils.js';
+import {AbstractComponent} from './abstract-component.js';
+import {FilmBaseComponent} from './film-base-component.js';
 
-export class FilmDetails {
-  constructor({
-    name,
-    originalName,
-    director,
-    genres,
-    rating,
-    runtime,
-    description,
-    watchlist,
-    watched,
-    favorite,
-    writers,
-    actors,
-    releaseDate,
-    country,
-    age,
-    poster,
-    comments
-  }) {
-    this._name = name;
-    this._genres = genres;
-    this._rating = rating;
-    this._runtime = runtime;
-    this._description = description;
-    this._watchlist = watchlist;
-    this._watched = watched;
-    this._favorite = favorite;
-    this._releaseDate = releaseDate;
-    this._poster = poster;
-    this._comments = comments;
+export class FilmDetails extends FilmBaseComponent{
+  constructor({name, genres, originalName, director, rating, runtime, description, watchlist, watched, favorite, writers, actors, releaseDate,
+    country, age, poster, comments}) {
+    super(name, genres, rating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments);
     this._originalName = originalName;
     this._director = director;
     this._writers = writers;
     this._actors = actors;
     this._country = country;
     this._age = age;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
   }
 
   getTemplate() {
@@ -180,6 +140,6 @@ export class FilmDetails {
           </section>
         </div>
       </form>
-    </section>`.trim();
+    </section>`;
   }
 }

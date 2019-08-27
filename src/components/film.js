@@ -1,35 +1,17 @@
-import {createElement} from '../utils.js';
+import {FilmBaseComponent} from './film-base-component.js';
+import {descriptionTrim} from '../utils';
 
-export class Film {
+export class Film extends FilmBaseComponent {
   constructor({name, genres, rating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments}) {
-    this._name = name;
-    this._genres = genres;
-    this._rating = rating;
-    this._runtime = runtime;
-    this._description = description;
-    this._watchlist = watchlist;
-    this._watched = watched;
-    this._favorite = favorite;
-    this._releaseDate = releaseDate;
-    this._poster = poster;
-    this._comments = comments;
-    this._element = null;
+    super(name, genres, rating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
-    return this._element;
+  _descriptionTrim() {
+    this._description = descriptionTrim(this._description);
   }
 
   getTemplate() {
+    this._descriptionTrim()
     return `<article class="film-card">
     <h3 class="film-card__title">${this._name}</h3>
     <p class="film-card__rating">${this._rating}</p>
@@ -46,6 +28,6 @@ export class Film {
       <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${this._watched ? `film-card__controls-item--active` : ``}">Mark as watched</button>
       <button class="film-card__controls-item button film-card__controls-item--favorite ${this._favorite ? `film-card__controls-item--active` : ``}">Mark as favorite</button>
     </form>
-  </article>`.trim();
+  </article>`;
   }
 }
