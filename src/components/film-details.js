@@ -1,7 +1,6 @@
-import {AbstractComponent} from './abstract-component.js';
 import {FilmBaseComponent} from './film-base-component.js';
 
-export class FilmDetails extends FilmBaseComponent{
+export class FilmDetails extends FilmBaseComponent {
   constructor({name, genres, originalName, director, rating, runtime, description, watchlist, watched, favorite, writers, actors, releaseDate,
     country, age, poster, comments}) {
     super(name, genres, rating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments);

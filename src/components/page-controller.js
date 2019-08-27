@@ -30,30 +30,30 @@ export class PageController {
 
   init() {
 
-    if(this._films.length === 0) {
+    if (this._films.length === 0) {
       render(this._container, this._noResult.getTemplate(), Position.BEFOREEND);
     } else {
       this._countToRender();
       render(this._container, this._filmsContainer.getElement(), Position.BEFOREEND);
       render(this._filmsContainer.getElement(), this._allFilmsList.getElement(), Position.BEFOREEND);
       this._filmsToRender.forEach((item) => this._renderFilm(this._filmsContainer, item));
-  
+
       if (this._films.some((film) => film.rating)) {
         render(this._filmsContainer.getElement(), this._topRatedFilmsList.getElement(), Position.BEFOREEND);
         let filmsRender = this._films.slice().sort((a, b) => b.rating - a.rating);
         filmsRender.slice(0, 2).forEach((film) => this._renderFilm(this._topRatedFilmsList, film));
       }
-  
+
       if (this._films.some((film) => film.comments.amount)) {
         render(this._filmsContainer.getElement(), this._mostCommentedFilmsList.getElement(), Position.BEFOREEND);
         let filmsRender = this._films.slice().sort((a, b) => b.comments.amount - a.comments.amount);
         filmsRender.slice(0, 2).forEach((film) => this._renderFilm(this._mostCommentedFilmsList, film));
       }
-  
+
       if (this._filmsToRenderedCount > 0) {
         render(this._allFilmsList.getElement(), this._btn.getElement(), Position.BEFOREEND);
       }
-  
+
       this._btn.getElement().addEventListener(`click`, (evt) => this._onBtnClick(evt));
     }
   }
@@ -90,7 +90,6 @@ export class PageController {
     filmDetailsComponent.getElement()
       .querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, () => {
-        console.log(`test`);
         unrender(filmDetailsComponent.getElement());
         filmDetailsComponent.removeElement();
         document.removeEventListener(`keydown`, onEscKeyDown);
@@ -109,9 +108,9 @@ export class PageController {
       });
 
     render(container.getElement().querySelector(`.films-list__container`), filmComponent.getElement(), Position.BEFOREEND);
-  };
+  }
 
-  _onBtnClick(evt) {
+  _onBtnClick() {
     this._filmsRenderedCount += this._MAX_FILMS_TO_RENDER;
     this._filmsToRender = this._films.slice(0, this._filmsRenderedCount);
     this._filmsContainer.getElement().querySelector(`.films-list__container`).innerHTML = ``;

@@ -11,7 +11,7 @@ export class Film extends FilmBaseComponent {
   }
 
   getTemplate() {
-    this._descriptionTrim()
+    this._descriptionTrim();
     return `<article class="film-card">
     <h3 class="film-card__title">${this._name}</h3>
     <p class="film-card__rating">${this._rating}</p>
