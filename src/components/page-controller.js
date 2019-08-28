@@ -5,6 +5,7 @@ import {FilmsList} from "./films-list";
 import {render, unrender, Position} from "../utils";
 import {BtnShowMore} from "./btn-show-more";
 import {NoResult} from './no-result';
+import {Sort} from "./sort";
 
 export class PageController {
   constructor(container, films) {
@@ -20,6 +21,7 @@ export class PageController {
     this._filmsRenderedCount = ``;
     this._filmsToRenderedCount = ``;
     this._filmsToRender = [];
+    this._sort = new Sort();
   }
 
   _countToRender() {
@@ -29,7 +31,7 @@ export class PageController {
   }
 
   init() {
-
+    render(this._container, this._sort.getElement(), Position.BEFOREEND);
     if (this._films.length === 0) {
       render(this._container, this._noResult.getTemplate(), Position.BEFOREEND);
     } else {
@@ -55,7 +57,9 @@ export class PageController {
       }
 
       this._btn.getElement().addEventListener(`click`, (evt) => this._onBtnClick(evt));
+      this._sort.getElement().addEventListener(`click`, (evt) => this._onSort(evt));
     }
+
   }
 
   _renderFilm(container, filmMock) {
@@ -119,6 +123,30 @@ export class PageController {
 
     if (this._filmsToRenderedCount <= 0) {
       document.querySelector(`.films-list__show-more`).classList.add(`visually-hidden`);
+    }
+  }
+
+  _onSort(evt) {
+    evt.preventDefault();
+
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+
+    this._allFilmsList.getElement().querySelector(`.films-list__container`).innerHTML = ``;
+
+    switch (evt.target.dataset.sortType) {
+      case `date`:
+        const sortedByDateFilms = this._filmsToRender.slice().sort((a, b) => a.releaseDate - b.releaseDate);
+        sortedByDateFilms.forEach((item) => this._renderFilm(this._allFilmsList, item));
+        break;
+      case `rating`:
+        const sortedByRatingFilms = this._filmsToRender.slice().sort((a, b) => b.rating - a.rating);
+        sortedByRatingFilms.forEach((item) => this._renderFilm(this._allFilmsList, item));
+        break;
+      case `default`:
+        this._filmsToRender.forEach((item) => this._renderFilm(this._allFilmsList, item));
+        break;
     }
   }
 }
