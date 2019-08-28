@@ -2,8 +2,8 @@ import {FilmBaseComponent} from './film-base-component.js';
 import {descriptionTrim} from '../utils';
 
 export class Film extends FilmBaseComponent {
-  constructor({name, genres, rating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments}) {
-    super(name, genres, rating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments);
+  constructor(params) {
+    super(params);
   }
 
   _descriptionTrim() {

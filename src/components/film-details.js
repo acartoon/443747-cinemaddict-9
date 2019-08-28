@@ -1,9 +1,8 @@
 import {FilmBaseComponent} from './film-base-component.js';
 
 export class FilmDetails extends FilmBaseComponent {
-  constructor({name, genres, originalName, director, rating, runtime, description, watchlist, watched, favorite, writers, actors, releaseDate,
-    country, age, poster, comments}) {
-    super(name, genres, rating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments);
+  constructor(params) {
+    super(params);
     this._originalName = originalName;
     this._director = director;
     this._writers = writers;
