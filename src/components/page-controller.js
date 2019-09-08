@@ -1,4 +1,4 @@
-import {Film} from "./film";
+import MovieController from "../controllers/movie-сontroller";
 import {FilmDetails} from "./film-details";
 import {Films} from "./films";
 import {FilmsList} from "./films-list";
@@ -25,25 +25,33 @@ export class PageController {
   init() {
     this._filmsToRender = this._films.slice(0, this._STEP_TO_RENDER);
     render(this._container, this._sort.getElement(), Position.BEFOREEND);
+
     if (this._films.length === 0) {
       render(this._container, this._noResult.getTemplate(), Position.BEFOREEND);
     } else {
+      //все фильмы
       render(this._container, this._filmsContainer.getElement(), Position.BEFOREEND);
       render(this._filmsContainer.getElement(), this._allFilmsList.getElement(), Position.BEFOREEND);
-      this._filmsToRender.forEach((item) => this._renderFilm(this._filmsContainer, item));
+      let container = this._filmsContainer.getElement().querySelector(`.films-list__container`);
+      this._filmsToRender.forEach((item) => new MovieController(container, item, this._onDataChange.bind(this)).init());
 
+      //высокие рейтинги
       if (this._films.some((film) => film.rating)) {
         render(this._filmsContainer.getElement(), this._topRatedFilmsList.getElement(), Position.BEFOREEND);
         let filmsRender = this._films.slice().sort((a, b) => b.rating - a.rating);
-        filmsRender.slice(0, 2).forEach((film) => this._renderFilm(this._topRatedFilmsList, film));
+        let container = this._topRatedFilmsList.getElement().querySelector(`.films-list__container`);
+        filmsRender.slice(0, 2).forEach((item) => new MovieController(container, item).init());
       }
 
+      //наиболее комментируемые
       if (this._films.some((film) => film.comments.amount)) {
         render(this._filmsContainer.getElement(), this._mostCommentedFilmsList.getElement(), Position.BEFOREEND);
         let filmsRender = this._films.slice().sort((a, b) => b.comments.amount - a.comments.amount);
-        filmsRender.slice(0, 2).forEach((film) => this._renderFilm(this._mostCommentedFilmsList, film));
+        let container = this._mostCommentedFilmsList.getElement().querySelector(`.films-list__container`);
+        filmsRender.slice(0, 2).forEach((item) => new MovieController(container, item).init());
       }
 
+      //рендер кнопки
       if (this._STEP_TO_RENDER < this._films.length) {
         render(this._allFilmsList.getElement(), this._btn.getElement(), Position.BEFOREEND);
       }
@@ -53,64 +61,13 @@ export class PageController {
     }
   }
 
-  _renderFilm(container, filmMock) {
-    const filmComponent = new Film(filmMock);
-    const filmDetailsComponent = new FilmDetails(filmMock);
-
-    const renderFilmDetails = () => {
-      render(this._container, filmDetailsComponent.getElement(), Position.BEFOREEND);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        unrender(filmDetailsComponent.getElement());
-        filmDetailsComponent.removeElement();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    const filmDetailsActive = (selector) => {
-      filmComponent.getElement()
-        .querySelector(selector)
-        .addEventListener(`click`, () => {
-          renderFilmDetails();
-          document.addEventListener(`keydown`, onEscKeyDown);
-        });
-    };
-
-    filmDetailsActive(`.film-card__poster`);
-    filmDetailsActive(`.film-card__title`);
-    filmDetailsActive(`.film-card__comments`);
-
-    filmDetailsComponent.getElement()
-      .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, () => {
-        unrender(filmDetailsComponent.getElement());
-        filmDetailsComponent.removeElement();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    filmDetailsComponent.getElement()
-      .querySelector(`textarea`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    filmDetailsComponent.getElement()
-      .querySelector(`textarea`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    render(container.getElement().querySelector(`.films-list__container`), filmComponent.getElement(), Position.BEFOREEND);
-  }
-
   _onBtnClick(evt) {
     evt.preventDefault();
     const counter = this._filmsToRender.length + this._STEP_TO_RENDER;
     this._filmsToRender = this._films.slice(0, counter);
-    this._allFilmsList.getElement().querySelector(`.films-list__container`).innerHTML = ``;
-    this._filmsToRender.forEach((item) => this._renderFilm(this._allFilmsList, item));
+    let container = this._allFilmsList.getElement().querySelector(`.films-list__container`);
+    container.innerHTML = ``;
+    this._filmsToRender.forEach((item) => new MovieController(container, item).init());
 
     if (counter >= this._films.length) {
       this._btn.getElement().classList.add(`visually-hidden`);
@@ -139,5 +96,20 @@ export class PageController {
         this._filmsToRender.forEach((item) => this._renderFilm(this._allFilmsList, item));
         break;
     }
+  }
+
+  _onDataChange(newData, oldData) {
+    this._films[this._films.findIndex((it) => it === oldData)] = newData;
+    this._renderBoard(this._films);
+  }
+
+  _renderBoard(data) {
+    console.log(`sfsdfd`)
+    let container = this._filmsContainer.getElement().querySelector(`.films-list__container`);
+    container.innerHTML = ``;
+    data.forEach((item) => new MovieController(container, item, this._onDataChange.bind(this)).init());
+
+    // this._taskList.getElement().innerHTML = ``;
+    // data.slice(0, this._TASKS_TO_RENDER).forEach((taskMock) => this._renderTask(this._taskList.getElement(), taskMock));
   }
 }

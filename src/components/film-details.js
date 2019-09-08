@@ -1,15 +1,24 @@
 import {FilmBaseComponent} from './film-base-component.js';
+import {render, unrender, Position} from "../utils";
 
 export class FilmDetails extends FilmBaseComponent {
-  constructor(params, originalName, director, writers, actors, country, age) {
+  constructor(params, onEscKeyDown) {
     super(params);
-    this._originalName = originalName;
-    this._director = director;
-    this._writers = writers;
-    this._actors = actors;
-    this._country = country;
-    this._age = age;
+    this._onEscKeyDown = onEscKeyDown;
+
+    this._onClose();
   }
+
+  
+  _onClose() {
+    this.getElement()
+      .querySelector(`.film-details__close`)
+      .addEventListener(`click`, () => {
+        unrender(this._element);
+        this._element.removeElement(); //выдает ошибку(
+        document.removeEventListener(`keydown`, this._onEscKeyDown);
+      });
+  };
 
   getTemplate() {
     return `<section class="film-details">

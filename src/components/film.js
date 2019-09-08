@@ -2,21 +2,48 @@ import {FilmBaseComponent} from './film-base-component.js';
 import {descriptionTrim} from '../utils';
 
 export class Film extends FilmBaseComponent {
-  constructor(params) {
+  constructor(params, onEscKeyDown, renderFilmDetails, onDataChange) {
     super(params);
+    this._onEscKeyDown = onEscKeyDown;
+    this._renderFilmDetails = renderFilmDetails;
+    this._onDataChange = onDataChange;
+
+    this._descriptionTrim();
+    this._filmDetailsActive(`.film-card__poster`);
+    this._filmDetailsActive(`.film-card__title`);
+    this._filmDetailsActive(`.film-card__comments`);
+    this._click(`.film-card__controls-item--add-to-watchlist`);
   }
 
   _descriptionTrim() {
     this._description = descriptionTrim(this._description);
   }
 
+  _filmDetailsActive(selector) {
+    this.getElement()
+      .querySelector(selector)
+      .addEventListener(`click`, () => {
+        this._renderFilmDetails();
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+      });
+  };
+
+  _click(selector) {
+    this.getElement()
+    .querySelector(selector)
+    .addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this.getElement().querySelector(selector).classList.toggle(`film-card__controls-item--active`);
+      this._onDataChange();
+    });
+  }
+
   getTemplate() {
-    this._descriptionTrim();
     return `<article class="film-card">
     <h3 class="film-card__title">${this._name}</h3>
     <p class="film-card__rating">${this._rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${this._releaseDate.getFullYear()}</span>
+      <span class="film-card__year">${this._releaseDate}</span>
       <span class="film-card__duration">${this._runtime}</span>
       <span class="film-card__genre">${this._genres[0]}</span>
     </p>
