@@ -41,13 +41,13 @@ export const Position = {
 };
 
 export const render = (container, element, place) => {
-  switch (place) {
-    case Position.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case Position.BEFOREEND:
-      container.append(element);
-      break;
+
+  if(typeof place === `number`) {
+    container.replaceChild(element, container.children[place]);
+  } else if (place === Position.AFTERBEGIN) {
+    container.prepend(element);
+  } else if(place === Position.BEFOREEND) {
+    container.append(element);
   }
 };
 

@@ -1,24 +1,86 @@
 import {FilmBaseComponent} from './film-base-component.js';
+import FormDetailsMiddle from './form-details-middle';
+import FormDetailsRating from './form-details-rating';
+import FilmDetailsContlols from './film-details-controls';
+import FilmDetailsControlsContainer from './film-details-controls-container';
 import {render, unrender, Position} from "../utils";
 
 export class FilmDetails extends FilmBaseComponent {
-  constructor(params, onEscKeyDown) {
+  constructor(params, onEscKeyDown, onDataChange) {
     super(params);
     this._onEscKeyDown = onEscKeyDown;
+    this._onDataChange = onDataChange;
+    this._formDetailsMiddle = new FormDetailsMiddle();
+    this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating);
+    this._filmDetailsControlsContainer = new FilmDetailsControlsContainer();
+    this._filmDetailsContlolsWatchlis = new FilmDetailsContlols(`watchlist`, this._watchlist);
+    this._filmDetailsContlolsWatched = new FilmDetailsContlols(`watched`, this._watched);
+    this._filmDetailsContlolsFavorite = new FilmDetailsContlols(`favorite`, this._favorite);
 
-    this._onClose();
+    this._init();
   }
 
-  
-  _onClose() {
+
+
+  _renderControls() {
+    const container = this.getElement().querySelector(`.form-details__top-container`);
+    render(container, this._filmDetailsControlsContainer.getElement(), Position.BEFOREEND);
+
+    this._filmDetailsContlolsWatchlis.init(this._filmDetailsControlsContainer.getElement());
+    this._filmDetailsContlolsWatched.init(this._filmDetailsControlsContainer.getElement());
+    this._filmDetailsContlolsFavorite.init(this._filmDetailsControlsContainer.getElement());
+  }
+
+  _renderFormDetailsRating() {
+      this._element.querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
+      render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
+  }
+
+
+  _init() {
+    this._renderControls();
+    this._onClick(`.film-details__control-label--watchlist`);
+    this._onClick(`.film-details__control-label--watched`);
+    this._onClick(`.film-details__control-label--favorite`);
+
     this.getElement()
-      .querySelector(`.film-details__close`)
+    .querySelector(`.film-details__close`)
       .addEventListener(`click`, () => {
-        unrender(this._element);
-        this._element.removeElement(); //выдает ошибку(
+        console.log(this.getElement())
+        unrender(this.getElement());
         document.removeEventListener(`keydown`, this._onEscKeyDown);
       });
-  };
+
+    if(this._watched) {
+      this._renderFormDetailsRating();
+    }
+
+
+
+    // this.getElement()
+    //   .querySelector(`.film-details__control-label--watched`)
+    //   .addEventListener(`click`, () => {
+    //     this._onDataChange();
+    //     // this._renderFormDetailsRating();
+    //     // if(!this._watched) {
+    //     //   unrender(this._formDetailsRating.getElement())
+    //     //   this._formDetailsRating.removeElement();
+    //     // } else {
+    //     //   this._renderFormDetailsRating();
+    //     // }
+    //   })
+    }
+    
+  _onClick(selector) {
+    this.getElement()
+      .querySelector(selector)
+        .addEventListener(`click`, (evt) => {
+          this._watchlist = !this._watchlist;
+          const test = evt.target.getAttribute(`for`);
+          console.log(test)
+          this._onDataChange(test);
+        });
+  }
 
   getTemplate() {
     return `<section class="film-details">
@@ -84,16 +146,6 @@ export class FilmDetails extends FilmBaseComponent {
             </div>
           </div>
     
-          <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._watchlist ? `checked` : ``}>
-            <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-    
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._watched ? `checked` : ``}>
-            <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-    
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._favorite ? `checked` : ``}>
-            <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
-          </section>
         </div>
     
         <div class="form-details__bottom-container">

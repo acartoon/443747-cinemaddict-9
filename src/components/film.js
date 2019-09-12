@@ -13,10 +13,12 @@ export class Film extends FilmBaseComponent {
     this._filmDetailsActive(`.film-card__title`);
     this._filmDetailsActive(`.film-card__comments`);
     this._click(`.film-card__controls-item--add-to-watchlist`);
+    // this._click(`.film-card__controls-item--mark-as-watche`);
+    // this._click(`.film-card__controls-item--favorite`);
   }
 
   _descriptionTrim() {
-    this._description = descriptionTrim(this._description);
+    // this._description = descriptionTrim(this._description);
   }
 
   _filmDetailsActive(selector) {
@@ -34,7 +36,7 @@ export class Film extends FilmBaseComponent {
     .addEventListener(`click`, (evt) => {
       evt.preventDefault();
       this.getElement().querySelector(selector).classList.toggle(`film-card__controls-item--active`);
-      this._onDataChange();
+      this._onDataChange(this.getElement());
     });
   }
 
