@@ -1,8 +1,9 @@
 import {AbstractComponent} from './abstract-component.js';
 
 export class FilmBaseComponent extends AbstractComponent {
-  constructor({name, genres, rating, ownrating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments, originalName, director, writers, actors, country, age}) {
+  constructor({id, name, genres, rating, ownrating, runtime, description, watchlist, watched, favorite, releaseDate, poster, comments, originalName, director, writers, actors, country, age}) {
     super();
+    this._id = id;
     this._name = name;
     this._genres = genres;
     this._rating = rating;

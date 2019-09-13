@@ -1,21 +1,17 @@
 import {FilmBaseComponent} from './film-base-component.js';
 import FormDetailsMiddle from './form-details-middle';
 import FormDetailsRating from './form-details-rating';
-import FilmDetailsContlols from './film-details-controls';
-import FilmDetailsControlsContainer from './film-details-controls-container';
-import {render, unrender, Position} from "../utils";
+import FilmDetailsControls from './film-details-controls';
+import {render, unrender, Position, remove} from "../utils";
 
-export class FilmDetails extends FilmBaseComponent {
+export class Popup extends FilmBaseComponent {
   constructor(params, onEscKeyDown, onDataChange) {
     super(params);
     this._onEscKeyDown = onEscKeyDown;
     this._onDataChange = onDataChange;
     this._formDetailsMiddle = new FormDetailsMiddle();
-    this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating);
-    this._filmDetailsControlsContainer = new FilmDetailsControlsContainer();
-    this._filmDetailsContlolsWatchlis = new FilmDetailsContlols(`watchlist`, this._watchlist);
-    this._filmDetailsContlolsWatched = new FilmDetailsContlols(`watched`, this._watched);
-    this._filmDetailsContlolsFavorite = new FilmDetailsContlols(`favorite`, this._favorite);
+    // this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating);
+    this._filmDetailsControls = new FilmDetailsControls(this._watched, this._watchlist, this._favorite);
 
     this._init();
   }
@@ -23,17 +19,12 @@ export class FilmDetails extends FilmBaseComponent {
 
 
   _renderControls() {
-    const container = this.getElement().querySelector(`.form-details__top-container`);
-    render(container, this._filmDetailsControlsContainer.getElement(), Position.BEFOREEND);
-
-    this._filmDetailsContlolsWatchlis.init(this._filmDetailsControlsContainer.getElement());
-    this._filmDetailsContlolsWatched.init(this._filmDetailsControlsContainer.getElement());
-    this._filmDetailsContlolsFavorite.init(this._filmDetailsControlsContainer.getElement());
+    render(this.getElement().querySelector(`.form-details__top-container`), this._filmDetailsControls.getElement(), Position.BEFOREEND)
   }
 
   _renderFormDetailsRating() {
-      this._element.querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
-      render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
+      // this._element.querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
+      // render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
   }
 
 
@@ -46,7 +37,6 @@ export class FilmDetails extends FilmBaseComponent {
     this.getElement()
     .querySelector(`.film-details__close`)
       .addEventListener(`click`, () => {
-        console.log(this.getElement())
         unrender(this.getElement());
         document.removeEventListener(`keydown`, this._onEscKeyDown);
       });
@@ -55,30 +45,27 @@ export class FilmDetails extends FilmBaseComponent {
       this._renderFormDetailsRating();
     }
 
-
-
-    // this.getElement()
+    // this._filmDetailsControls.getElement()
     //   .querySelector(`.film-details__control-label--watched`)
     //   .addEventListener(`click`, () => {
-    //     this._onDataChange();
-    //     // this._renderFormDetailsRating();
-    //     // if(!this._watched) {
-    //     //   unrender(this._formDetailsRating.getElement())
-    //     //   this._formDetailsRating.removeElement();
-    //     // } else {
-    //     //   this._renderFormDetailsRating();
-    //     // }
+    //     this._watched = !this._watched;
+    //     if(!this._watched) {
+    //       this._ownrating = null;
+    //       unrender(this._formDetailsRating.getElement())
+    //       this._formDetailsRating.removeElement();
+    //     } else {
+    //       this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating);
+    //       this._renderFormDetailsRating();
+    //     }
     //   })
     }
     
   _onClick(selector) {
-    this.getElement()
+    this._filmDetailsControls.getElement()
       .querySelector(selector)
         .addEventListener(`click`, (evt) => {
-          this._watchlist = !this._watchlist;
-          const test = evt.target.getAttribute(`for`);
-          console.log(test)
-          this._onDataChange(test);
+          const target = evt.target.getAttribute(`for`);
+          this._onDataChange(target);
         });
   }
 
@@ -145,9 +132,9 @@ export class FilmDetails extends FilmBaseComponent {
               </p>
             </div>
           </div>
-    
+
         </div>
-    
+
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>

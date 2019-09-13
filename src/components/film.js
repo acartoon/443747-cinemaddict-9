@@ -5,38 +5,38 @@ export class Film extends FilmBaseComponent {
   constructor(params, onEscKeyDown, renderFilmDetails, onDataChange) {
     super(params);
     this._onEscKeyDown = onEscKeyDown;
-    this._renderFilmDetails = renderFilmDetails;
+    this._renderPopup = renderFilmDetails;
     this._onDataChange = onDataChange;
 
-    this._descriptionTrim();
-    this._filmDetailsActive(`.film-card__poster`);
-    this._filmDetailsActive(`.film-card__title`);
-    this._filmDetailsActive(`.film-card__comments`);
-    this._click(`.film-card__controls-item--add-to-watchlist`);
-    // this._click(`.film-card__controls-item--mark-as-watche`);
-    // this._click(`.film-card__controls-item--favorite`);
+    this._init();
   }
-
-  _descriptionTrim() {
+  
+  _init() {
+    this._onRenderPopup(`.film-card__poster`);
+    this._onRenderPopup(`.film-card__title`);
+    this._onRenderPopup(`.film-card__comments`);
+    this._onFilmControlClick(`.film-card__controls-item--add-to-watchlist`);
+    this._onFilmControlClick(`.film-card__controls-item--mark-as-watched`);
+    this._onFilmControlClick(`.film-card__controls-item--favorite`);
     // this._description = descriptionTrim(this._description);
   }
 
-  _filmDetailsActive(selector) {
+  _onRenderPopup(selector) {
     this.getElement()
       .querySelector(selector)
       .addEventListener(`click`, () => {
-        this._renderFilmDetails();
+        this._renderPopup();
         document.addEventListener(`keydown`, this._onEscKeyDown);
       });
   };
 
-  _click(selector) {
+  _onFilmControlClick(selector) {
     this.getElement()
     .querySelector(selector)
     .addEventListener(`click`, (evt) => {
       evt.preventDefault();
       this.getElement().querySelector(selector).classList.toggle(`film-card__controls-item--active`);
-      this._onDataChange(this.getElement());
+      this._onDataChange();
     });
   }
 
@@ -50,7 +50,7 @@ export class Film extends FilmBaseComponent {
       <span class="film-card__genre">${this._genres[0]}</span>
     </p>
     <img src="${this._poster}" alt="" class="film-card__poster">
-    <p class="film-card__description">${this._description}</p>
+    <p class="film-card__description">${descriptionTrim(this._description)}</p>
     <a class="film-card__comments">${this._comments.amount} comments</a>
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._watchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>

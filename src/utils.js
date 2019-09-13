@@ -41,7 +41,6 @@ export const Position = {
 };
 
 export const render = (container, element, place) => {
-
   if(typeof place === `number`) {
     container.replaceChild(element, container.children[place]);
   } else if (place === Position.AFTERBEGIN) {

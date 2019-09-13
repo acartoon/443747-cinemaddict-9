@@ -1,12 +1,10 @@
-import MovieController from "../controllers/movie-сontroller";
-import {FilmDetails} from "./film-details";
-import {Films} from "./films";
-import {FilmsList} from "./films-list";
+import MovieController from "./movie-controller";
+import {Films} from "../components/films";
+import {FilmsList} from "../components/films-list";
 import {render, unrender, Position} from "../utils";
-import {BtnShowMore} from "./btn-show-more";
-import {NoResult} from './no-result';
-import {Sort} from "./sort";
-import {cloneDeep} from 'lodash';
+import {BtnShowMore} from "../components/btn-show-more";
+import {NoResult} from '../components/no-result';
+import {Sort} from "../components/sort";
 
 export class PageController {
   constructor(container, films) {
@@ -22,10 +20,11 @@ export class PageController {
     this._STEP_TO_RENDER = 5;
     this._filmsToRender = '';
     this._subscriptions = [];
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   _onMovieController(container, data) {
-    return new MovieController(container, data, this._onDataChange.bind(this), this._onChangeView.bind(this), Position.BEFOREEND).init();
+    return new MovieController(container, data, this._onDataChange, this._onChangeView.bind(this), Position.BEFOREEND).init();
   }
 
   _renderTopRatedFilms() {
@@ -112,18 +111,17 @@ export class PageController {
   }
 
   _onDataChange(newData, oldData) {
-    const index = this._films.findIndex((it) => it === oldData);
-    this._films[index] = cloneDeep(newData);
+    const index = this._films.findIndex((it) => it.id === oldData.id);
+    this._films[index] = newData;
     // console.log(this._films[index])
     this._renderBoard_(index);
   }
 
   _renderBoard_(index) {
-    console.log(index)
     let container = this._filmsContainer.getElement().querySelector(`.films-list__container`);
-    const movie = new MovieController(container, this._films[index], this._onDataChange.bind(this), this._onChangeView.bind(this), index);
+    const movie = new MovieController(container, this._films[index], this._onDataChange, this._onChangeView.bind(this), index);
     movie.init()
-    this._subscriptions.push(movie.setDefaultView.bind(movie));
+    this._subscriptions.forEach((subscription) => subscription());
 
   }
 
@@ -135,7 +133,7 @@ export class PageController {
 
     let container = this._filmsContainer.getElement().querySelector(`.films-list__container`);
     container.innerHTML = ``;
-    data.slice(0, this._filmsToRender).forEach((item) => new MovieController(container, item, this._onDataChange.bind(this)).init());
+    data.slice(0, this._filmsToRender).forEach((item) => new MovieController(container, item, this._onDataChange).init());
 
     unrender(this._mostCommentedFilmsList.getElement());
     unrender(this._topRatedFilmsList.getElement());

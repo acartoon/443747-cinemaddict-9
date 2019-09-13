@@ -1,4 +1,4 @@
-import {PageController} from './components/page-controller.js';
+import {PageController} from './controllers/page-controller';
 import {searchTemplate} from './components/search';
 
 import {profileTemplate} from './components/profile';

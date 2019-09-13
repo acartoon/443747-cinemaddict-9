@@ -1,24 +1,23 @@
-import FilmDetailsInput from './film-details-input';
-import FilmDetailsLabel from './film-details-label';
-import {render, Position} from "../utils";
 import {AbstractComponent} from './abstract-component.js';
 
-export default class FilmDetailsContlols extends AbstractComponent{
-  constructor(name, controls) {
+export default class FilmDetailsControls extends AbstractComponent{
+  constructor(watched, watchlist, favorite) {
     super();
-    this._name = name;
-    this._controls = controls;
-    this._filmDetailsInput = new FilmDetailsInput(this._name, this._controls);
-    this._filmDetailsLabel = new FilmDetailsLabel(this._name);
+    this._watched = watched;
+    this._watchlist = watchlist;
+    this._favorite = favorite;
   }
-
   
-  init(container) {
-    // if(this._name == `watchlist`) {
-    //   console.log(this._controls);
+  getTemplate() {
+    return `<section class="film-details__controls">
+    <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._watchlist ? `checked` : ``}>
+    <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-    // }
-    render(container, this._filmDetailsInput.getElement(), Position.BEFOREEND)
-    render(container, this._filmDetailsLabel.getElement(), Position.BEFOREEND)
+    <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._watched ? `checked` : ``}>
+    <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+
+    <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._favorite ? `checked` : ``}>
+    <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+  </section>`
   }
 }

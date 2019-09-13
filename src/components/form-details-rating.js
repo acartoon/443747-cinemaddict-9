@@ -56,7 +56,6 @@ export default class FormDetailsRating extends AbstractComponent {
         </div>
       </section>
     </div>
-  </section>
-    `;
+  </section>`;
   }
 }
