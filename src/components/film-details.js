@@ -5,28 +5,17 @@ import FilmDetailsControls from './film-details-controls';
 import {render, unrender, Position, remove} from "../utils";
 
 export class FilmDetails extends FilmBaseComponent {
-  constructor(params, onEscKeyDown, onDataChange) {
+  constructor(params, onEscKeyDown, onDataChange, onClosePopup) {
     super(params);
     this._onEscKeyDown = onEscKeyDown;
     this._onDataChange = onDataChange;
+    this._onClosePopup = onClosePopup;
     this._formDetailsMiddle = new FormDetailsMiddle();
     this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating);
     this._filmDetailsControls = new FilmDetailsControls(this._watched, this._watchlist, this._favorite, this._onDataChange);
 
     this._init();
   }
-
-
-
-  _renderControls() {
-    render(this.getElement().querySelector(`.form-details__top-container`), this._filmDetailsControls.getElement(), Position.BEFOREEND)
-  }
-
-  _renderFormDetailsRating() {
-      this._element.querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
-      render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
-  }
-
 
   _init() {
     this._renderControls();
@@ -38,38 +27,25 @@ export class FilmDetails extends FilmBaseComponent {
     this.getElement()
     .querySelector(`.film-details__close`)
       .addEventListener(`click`, () => {
-        unrender(this.getElement());
+        this._onClosePopup();
         document.removeEventListener(`keydown`, this._onEscKeyDown);
       });
 
     if(this._watched) {
       this._renderFormDetailsRating();
     }
+  }
 
-    // this._filmDetailsControls.getElement()
-    //   .querySelector(`.film-details__control-label--watched`)
-    //   .addEventListener(`click`, () => {
-    //     this._watched = !this._watched;
-    //     if(!this._watched) {
-    //       this._ownrating = null;
-    //       unrender(this._formDetailsRating.getElement())
-    //       this._formDetailsRating.removeElement();
-    //     } else {
-    //       this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating);
-    //       this._renderFormDetailsRating();
-    //     }
-    //   })
-    }
-    
-  // _onClick(selector) {
-  //   this._filmDetailsControls.getElement()
-  //     .querySelector(selector)
-  //       .addEventListener(`click`, (evt) => {
-  //         const target = evt.target.getAttribute(`for`);
-  //         console.log(`click`)
-  //         this._onDataChange(target);
-  //       });
-  // }
+  _renderControls() {
+    render(this.getElement().querySelector(`.form-details__top-container`), this._filmDetailsControls.getElement(), Position.BEFOREEND)
+  }
+
+  _renderFormDetailsRating() {
+      this._element.querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
+      render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
+  }
+
+
 
   getTemplate() {
     return `<form class="film-details__inner" action="" method="get">

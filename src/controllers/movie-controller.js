@@ -24,7 +24,6 @@ export default class MovieController {
   }
 
   _renderFormDetailsRating(poster, name, ownrating) {
-    // const formDetailsRating = FormDetailsRating(this._poster, this._name, this._ownrating)
     this._formDetailsRating = new FormDetailsRating(poster, name, ownrating);
     this._filmDetails.getElement().querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
     render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
@@ -38,13 +37,19 @@ export default class MovieController {
     this._tmpData = null;
   }
 
+  _onClosePopup() {
+    unrender(this._popup.getElement());
+    this._popup.removeElement();
+
+  }
+
   init() {
     render(this._container, this._filmComponent.getElement(), this._place);
   }
 
   _renderFilmDetails() {
     render(document.body, this._popup.getElement(), Position.BEFOREEND);
-    this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this));
+    this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this), this._onClosePopup.bind(this));
     render(this._popup.getElement(), this._filmDetails.getElement(), Position.BEFOREEND);
     this._onChangeView();
   };
@@ -52,7 +57,7 @@ export default class MovieController {
   _onEscKeyDown(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       this.onDataChangePopup;
-      unrender(this._filmDetails.getElement());
+      this._onClosePopup();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   };
@@ -79,7 +84,7 @@ export default class MovieController {
         break
       case `watched`:
         this._tmpData.watched = !this._filmDetails.getElement().querySelector(`#watched`).hasAttribute(`checked`);
-        this._data.ownrating = null;
+        this._tmpData.ownrating = null;
         break
       case `favorite`:
         this._tmpData.favorite = !this._filmDetails.getElement().querySelector(`#favorite`).hasAttribute(`checked`)
@@ -87,7 +92,7 @@ export default class MovieController {
     }
     
     this._onDataChange(this._tmpData, this._data);
-    this._filmDetails = new FilmDetails(this._tmpData, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this));
+    this._filmDetails = new FilmDetails(this._tmpData, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this), this._onClosePopup.bind(this));
     this._popup.getElement().replaceChild(this._filmDetails.getElement(), this._popup.getElement().lastChild);
 
     this._resetTmpData();
