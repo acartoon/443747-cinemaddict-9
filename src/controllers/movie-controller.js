@@ -1,9 +1,10 @@
 import {render, unrender, Position} from "../utils";
 import {Film} from "../components/film";
 import {Popup} from "../components/popup";
+import {FilmDetails} from "../components/film-details";
 import {cloneDeep} from 'lodash';
 import FormDetailsMiddle from '../components/form-details-middle';
-import FormDetailsRating from '../components/form-details-rating';
+import FilmDetailsControls from '../components/film-details-controls';
 
 export default class MovieController {
   constructor(container, data, onDataChange, onChangeView, place) {
@@ -14,17 +15,19 @@ export default class MovieController {
     this._onChangeView = onChangeView;
     this._formDetailsMiddle = new FormDetailsMiddle();
     this._filmComponent = new Film(this._data, this._onEscKeyDown.bind(this), this._renderFilmDetails.bind(this), this.onDataChangefilmComponent.bind(this));
-    this._popup = new Popup(this._data, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this));
+    this._popup = new Popup;
+    this._filmDetails = null;
+    
     this._tmpData = null;
     this._formDetailsRating = null;
+    
   }
 
   _renderFormDetailsRating(poster, name, ownrating) {
     // const formDetailsRating = FormDetailsRating(this._poster, this._name, this._ownrating)
     this._formDetailsRating = new FormDetailsRating(poster, name, ownrating);
-    this._popup.getElement().querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
+    this._filmDetails.getElement().querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
     render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
-    console.log(ownrating);
 }
 
   _initTmpData() {
@@ -37,57 +40,22 @@ export default class MovieController {
 
   init() {
     render(this._container, this._filmComponent.getElement(), this._place);
-
-    // if (document.body.contains(`.film-details`)) {
-    //   // unrender(this._popup.getElement());
-    //   console.log(`test`)
-    // }
-
-    if(this._data.watched) {
-      this._renderFormDetailsRating(this._data.poster, this._data.name, this._data.ownrating)
-    }
-
-    this._popup.getElement()
-    .querySelector(`.film-details__control-label--watched`)
-    .addEventListener(`click`, () => {
-      this._initTmpData();
-      this._tmpData.watched = !this._tmpData.watched;
-      if(!this._tmpData.watched) {
-        console.log(this._tmpData.watched);
-        this._tmpData.ownrating = null;
-        unrender(this._formDetailsRating.getElement())
-        this._formDetailsRating.removeElement();
-      } else {
-        // this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating);
-        // this._renderFormDetailsRating();
-       this._renderFormDetailsRating(this._tmpData.poster, this._tmpData.name, this._tmpData.ownrating)
-      }
-    })
   }
 
   _renderFilmDetails() {
-    render(this._container, this._popup.getElement(), Position.BEFOREEND);
+    render(document.body, this._popup.getElement(), Position.BEFOREEND);
+    this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this));
+    render(this._popup.getElement(), this._filmDetails.getElement(), Position.BEFOREEND);
     this._onChangeView();
   };
 
   _onEscKeyDown(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       this.onDataChangePopup;
-      unrender(this._popup.getElement());
+      unrender(this._filmDetails.getElement());
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   };
-
-  // _onClick(selector) {
-  //   this._popup.getElement()
-  //     .querySelector(selector)
-  //       .addEventListener(`click`, (evt) => {
-  //         const test = evt.target.getAttribute(`for`);
-  //         console.log(test)
-  //         this.onDataChangePopup(test);
-  //       });
-  // }
-
 
   onDataChangefilmComponent() {
     this._initTmpData();
@@ -102,25 +70,34 @@ export default class MovieController {
 
   onDataChangePopup(data) {
     this._initTmpData();
+    this._tmpData.watchlist = this._filmDetails.getElement().querySelector(`#watchlist`).hasAttribute(`checked`);
+    this._tmpData.watched = this._filmDetails.getElement().querySelector(`#watched`).hasAttribute(`checked`)
+    this._tmpData.favorite = this._filmDetails.getElement().querySelector(`#favorite`).hasAttribute(`checked`)
     switch (data) {
       case `watchlist`:
-        this._tmpData.watchlist = !this._tmpData.watchlist;
+        this._tmpData.watchlist = !this._filmDetails.getElement().querySelector(`#watchlist`).hasAttribute(`checked`);
         break
       case `watched`:
-        this._tmpData.watched = !this._tmpData.watched;
+        this._tmpData.watched = !this._filmDetails.getElement().querySelector(`#watched`).hasAttribute(`checked`);
+        this._data.ownrating = null;
         break
       case `favorite`:
-        this._tmpData.favorite = !this._tmpData.favorite;
+        this._tmpData.favorite = !this._filmDetails.getElement().querySelector(`#favorite`).hasAttribute(`checked`)
         break
     }
+    
     this._onDataChange(this._tmpData, this._data);
+    this._filmDetails = new FilmDetails(this._tmpData, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this));
+    this._popup.getElement().replaceChild(this._filmDetails.getElement(), this._popup.getElement().lastChild);
+
     this._resetTmpData();
+
   }
 
   setDefaultView() {
-    if (document.body.contains(this._popup.getElement())) {
-      unrender(this._popup.getElement());
-      // this._popup.removeElement()
+    if (document.body.contains(this._filmDetails.getElement())) {
+      unrender(this._filmDetails.getElement());
+      // this._filmDetails.removeElement()
     }
   }
 }

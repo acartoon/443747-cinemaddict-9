@@ -122,7 +122,6 @@ export class PageController {
     const movie = new MovieController(container, this._films[index], this._onDataChange, this._onChangeView.bind(this), index);
     movie.init()
     this._subscriptions.forEach((subscription) => subscription());
-
   }
 
   _renderBoard(data) {
