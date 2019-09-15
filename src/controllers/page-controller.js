@@ -33,15 +33,17 @@ export class PageController {
       let filmsRender = this._films.slice().sort((a, b) => b.rating - a.rating);
       let container = this._topRatedFilmsList.getElement().querySelector(`.films-list__container`);
       filmsRender.slice(0, 2).forEach((item) => this._onMovieController(container, item));
+      this._subscriptions.forEach((subscription) => subscription());
     }
   }
 
   _renderMostCommentedFilms() {
-    if (this._films.some((film) => film.comments.amount)) {
+    if (this._films.some((film) => film.comments.length)) {
       render(this._filmsContainer.getElement(), this._mostCommentedFilmsList.getElement(), Position.BEFOREEND);
       let filmsRender = this._films.slice().sort((a, b) => b.comments.amount - a.comments.amount);
       let container = this._mostCommentedFilmsList.getElement().querySelector(`.films-list__container`);
       filmsRender.slice(0, 2).forEach((item) => this._onMovieController(container, item));
+      this._subscriptions.forEach((subscription) => subscription());
     }
   }
 
@@ -57,6 +59,7 @@ export class PageController {
       render(this._filmsContainer.getElement(), this._allFilmsList.getElement(), Position.BEFOREEND);
       let container = this._filmsContainer.getElement().querySelector(`.films-list__container`);
       this._films.slice(0, this._filmsToRender).forEach((item) => this._onMovieController(container, item));
+      this._subscriptions.forEach((subscription) => subscription());
 
       // высокие рейтинги
      this._renderTopRatedFilms();
@@ -113,7 +116,6 @@ export class PageController {
   _onDataChange(newData, oldData) {
     const index = this._films.findIndex((it) => it.id === oldData.id);
     this._films[index] = newData;
-    // console.log(this._films[index])
     this._renderBoard_(index);
   }
 
@@ -143,8 +145,8 @@ export class PageController {
     this._renderTopRatedFilms();
     this._renderMostCommentedFilms();
   }
-  _onChangeView() {
+  
+    _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
-
 }

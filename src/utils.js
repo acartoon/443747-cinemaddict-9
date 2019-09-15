@@ -35,12 +35,27 @@ export const createElement = (template) => {
   return newElement.firstChild;
 };
 
+
+export const emoji = {
+  'smile' : `smile`,
+  'sleeping' : `sleeping`,
+  'gpuke' : `puke`,
+  'angry' : `angry`,
+}
+
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
 };
 
-export const render = (container, element, place) => {
+export const Key = {
+  ESCAPE_IE: `Escape`,
+  ESCAPE: `Esc`,
+  SEND: `Enter`,
+  SEND_MAC: `Command + Enter`,
+};
+
+export const render = (container, element, place = Position.BEFOREEND) => {
   if(typeof place === `number`) {
     container.replaceChild(element, container.children[place]);
   } else if (place === Position.AFTERBEGIN) {

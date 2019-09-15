@@ -1,4 +1,4 @@
-import {render, unrender, Position} from "../utils";
+import {render, unrender, Position, Key} from "../utils";
 import {Film} from "../components/film";
 import {Popup} from "../components/popup";
 import {FilmDetails} from "../components/film-details";
@@ -13,21 +13,14 @@ export default class MovieController {
     this._data = data;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
-    this._formDetailsMiddle = new FormDetailsMiddle();
-    this._filmComponent = new Film(this._data, this._onEscKeyDown.bind(this), this._renderFilmDetails.bind(this), this.onDataChangefilmComponent.bind(this));
+    this._filmComponent = new Film(this._data, this._onEscKeyDown.bind(this), this._renderFilmDetails.bind(this), this.onDataChange.bind(this));
     this._popup = new Popup;
-    this._filmDetails = null;
+    this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChange.bind(this), this._onClosePopup.bind(this), this._onSendMsg.bind(this));
     
     this._tmpData = null;
     this._formDetailsRating = null;
     
   }
-
-  _renderFormDetailsRating(poster, name, ownrating) {
-    this._formDetailsRating = new FormDetailsRating(poster, name, ownrating);
-    this._filmDetails.getElement().querySelector(`.form-details__bottom-container`).before(this._formDetailsMiddle.getElement());
-    render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
-}
 
   _initTmpData() {
     this._tmpData = cloneDeep(this._data);
@@ -45,11 +38,16 @@ export default class MovieController {
 
   init() {
     render(this._container, this._filmComponent.getElement(), this._place);
+
+    if(document.querySelector(`.film-details`)) {
+      const popup = document.querySelector(`.film-details`);
+      this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChange.bind(this), this._onClosePopup.bind(this), this._onSendMsg.bind(this));
+      popup.replaceChild(this._filmDetails.getElement(), popup.lastChild);
+    }
   }
 
   _renderFilmDetails() {
     render(document.body, this._popup.getElement(), Position.BEFOREEND);
-    this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this), this._onClosePopup.bind(this));
     render(this._popup.getElement(), this._filmDetails.getElement(), Position.BEFOREEND);
     this._onChangeView();
   };
@@ -62,47 +60,40 @@ export default class MovieController {
     }
   };
 
-  onDataChangefilmComponent() {
-    this._initTmpData();
-    const form = this._filmComponent.getElement();
-    this._tmpData.watchlist = form.querySelector(`.film-card__controls-item--add-to-watchlist`).classList.contains(`film-card__controls-item--active`),
-    this._tmpData.watched = form.querySelector(`.film-card__controls-item--mark-as-watched`).classList.contains(`film-card__controls-item--active`),
-    this._tmpData.favorite = form.querySelector(`.film-card__controls-item--favorite`).classList.contains(`film-card__controls-item--active`),
-
-    this._onDataChange(this._tmpData, this._data);
-    this._resetTmpData();
+    _onSendMsg(evt) {
+    if (evt.key == `Enter` && (event.ctrlKey || event.metaKey)) {
+      console.log(`enter`)
+      document.removeEventListener(`keydown`, this._onSendMsg);
+    }  
   }
 
-  onDataChangePopup(data) {
+  onDataChange(data) {
     this._initTmpData();
-    this._tmpData.watchlist = this._filmDetails.getElement().querySelector(`#watchlist`).hasAttribute(`checked`);
-    this._tmpData.watched = this._filmDetails.getElement().querySelector(`#watched`).hasAttribute(`checked`)
-    this._tmpData.favorite = this._filmDetails.getElement().querySelector(`#favorite`).hasAttribute(`checked`)
-    switch (data) {
-      case `watchlist`:
-        this._tmpData.watchlist = !this._filmDetails.getElement().querySelector(`#watchlist`).hasAttribute(`checked`);
-        break
-      case `watched`:
-        this._tmpData.watched = !this._filmDetails.getElement().querySelector(`#watched`).hasAttribute(`checked`);
-        this._tmpData.ownrating = null;
-        break
-      case `favorite`:
-        this._tmpData.favorite = !this._filmDetails.getElement().querySelector(`#favorite`).hasAttribute(`checked`)
-        break
+    
+    if(data === `watchlist`) {
+      this._tmpData.watchlist = !this._tmpData.watchlist;
+    }
+    else if (data === `watched`) {
+      this._tmpData.watched = !this._tmpData.watched;
+      this._tmpData.ownrating = null;
+    }
+    else if (data === `favorite`){
+      this._tmpData.favorite = !this._tmpData.favorite
+    }
+    else if (typeof data === `number`) {
+      console.log(data)
+
+      this._tmpData.ownrating = data;
     }
     
     this._onDataChange(this._tmpData, this._data);
-    this._filmDetails = new FilmDetails(this._tmpData, this._onEscKeyDown.bind(this), this.onDataChangePopup.bind(this), this._onClosePopup.bind(this));
-    this._popup.getElement().replaceChild(this._filmDetails.getElement(), this._popup.getElement().lastChild);
-
     this._resetTmpData();
-
   }
 
   setDefaultView() {
     if (document.body.contains(this._filmDetails.getElement())) {
       unrender(this._filmDetails.getElement());
-      // this._filmDetails.removeElement()
+      this._filmDetails.removeElement()
     }
   }
 }

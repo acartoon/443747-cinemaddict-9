@@ -51,7 +51,7 @@ const film = () => ({
   director: Array.from(namesPiples)[getrandomInteger(4)],
   genres: getRandomElements(Array.from(genres), getrandomInteger(4)),
   rating: getRandomRating(),
-  ownrating: getrandomInteger(10),
+  ownrating: getrandomInteger(9),
   runtime: getRandomTime(),
   description: descriptionFilm(description),
   watchlist: Boolean(Math.round(Math.random())),
@@ -63,15 +63,14 @@ const film = () => ({
   country: Array.from(countries)[Math.floor(Math.random() * 4)],
   age: `${getrandomInteger(21)}+`,
   poster: posters[getrandomInteger(6)],
-  comments: {
-    amount: getrandomInteger(10),
-    comment: {
-      text: descriptionFilm(description),
-      author: Array.from(namesPiples)[getrandomInteger(4)],
-      date: `${getrandomInteger(10, 2)} days ago`,
-      emojis: `./images/emoji/smile.png`,
-    }
+  comments: [
+    {
+    emojis: `smile`,
+    text: descriptionFilm(description),
+    author: Array.from(namesPiples)[getrandomInteger(4)],
+    date: `${getrandomInteger(10, 2)} days ago`,
   }
+]
 });
 
 const titles = [`Top rated`, `Most commented`];

@@ -36,7 +36,6 @@ export default class FilmDetailsControls extends AbstractComponent{
       .querySelector(selector)
         .addEventListener(`click`, (evt) => {
           const target = evt.target.getAttribute(`for`);
-          console.log(`click`)
           this._onDataChange(target);
         });
   }

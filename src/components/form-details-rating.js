@@ -1,12 +1,21 @@
 import {AbstractComponent} from './abstract-component';
-import { render, Position} from '../utils';
+import UserRatingScore from './user-rating-score';
+import {render, Position} from '../utils';
 
 export default class FormDetailsRating extends AbstractComponent {
-  constructor(poster, name, rating) {
+  constructor(poster, name, rating, onDataChange) {
     super();
     this._poster = poster;
     this._name = name;
     this._rating = rating;
+    this._onDataChange = onDataChange;
+    this._userRatingScore = new UserRatingScore(this._rating, this._onDataChange);
+
+    this._init();
+  }
+
+  _init() {
+    render(this.getElement().querySelector(`.film-details__user-rating-inner`), this._userRatingScore.getElement())
   }
 
   getTemplate() {
@@ -25,35 +34,6 @@ export default class FormDetailsRating extends AbstractComponent {
 
         <p class="film-details__user-rating-feelings">How you feel it?</p>
 
-        <div class="film-details__user-rating-score">
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._rating == 1 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-1">1</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._rating == 2 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${this._rating == 3 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${this._rating == 4 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._rating == 5 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${this._rating == 6 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${this._rating == 7 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${this._rating == 8 ? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${this._rating == 9? `checked` : ``}>
-          <label class="film-details__user-rating-label" for="rating-9">9</label>
-
-        </div>
       </section>
     </div>
   </section>`;
