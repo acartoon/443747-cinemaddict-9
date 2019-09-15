@@ -1,19 +1,59 @@
 import {FilmBaseComponent} from './film-base-component.js';
+import FormDetailsMiddle from './form-details-middle';
+import FormDetailsBottom from './form-details-bottom';
+import FormDetailsRating from './form-details-rating';
+import FilmDetailsControls from './film-details-controls';
+import {render, unrender, Position, remove} from "../utils";
+import FormDetailsComments from './film-details__comments.js';
 
 export class FilmDetails extends FilmBaseComponent {
-  constructor(params, originalName, director, writers, actors, country, age) {
+  constructor(params, onEscKeyDown, onDataChange, onClosePopup, onSendMsg) {
     super(params);
-    this._originalName = originalName;
-    this._director = director;
-    this._writers = writers;
-    this._actors = actors;
-    this._country = country;
-    this._age = age;
+    this._onEscKeyDown = onEscKeyDown;
+    this._onDataChange = onDataChange;
+    this._onClosePopup = onClosePopup;
+    this._onSendMsg = onSendMsg;
+    this._formDetailsMiddle = new FormDetailsMiddle();
+    this._formDetailsBottom = new FormDetailsBottom();
+    this._formDetailsComments = new FormDetailsComments(this._comments, this._onSendMsg, this._onEscKeyDown);
+    this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating, this._onDataChange);
+    this._filmDetailsControls = new FilmDetailsControls(this._watched, this._watchlist, this._favorite, this._onDataChange);
+
+    this._init();
+  }
+
+  _init() {
+    this._renderControls();
+    render(this.getElement(), this._formDetailsBottom.getElement());
+    render(this._formDetailsBottom.getElement(), this._formDetailsComments.getElement());
+
+    if(this.watched) {
+      this._renderFormDetailsRating();
+    }
+
+    this.getElement()
+    .querySelector(`.film-details__close`)
+      .addEventListener(`click`, () => {
+        this._onClosePopup();
+        document.removeEventListener(`keydown`, this._onEscKeyDown);
+      });
+
+    if(this._watched) {
+      this._renderFormDetailsRating();
+    }
+  }
+
+  _renderControls() {
+    render(this.getElement().querySelector(`.form-details__top-container`), this._filmDetailsControls.getElement(), Position.BEFOREEND)
+  }
+
+  _renderFormDetailsRating() {
+      this._element.querySelector(`.form-details__top-container`).after(this._formDetailsMiddle.getElement());
+      render(this._formDetailsMiddle.getElement(), this._formDetailsRating.getElement(), Position.AFTERBEGIN);
   }
 
   getTemplate() {
-    return `<section class="film-details">
-      <form class="film-details__inner" action="" method="get">
+    return `<form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
           <div class="film-details__close">
             <button class="film-details__close-btn" type="button">close</button>
@@ -74,70 +114,7 @@ export class FilmDetails extends FilmBaseComponent {
               </p>
             </div>
           </div>
-    
-          <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._watchlist ? `checked` : ``}>
-            <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-    
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._watched ? `checked` : ``}>
-            <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-    
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._favorite ? `checked` : ``}>
-            <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
-          </section>
         </div>
-    
-        <div class="form-details__bottom-container">
-          <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
-    
-            <ul class="film-details__comments-list">
-              <li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="${this._comments.comment.emojis}" width="55" height="55" alt="emoji">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">${this._comments.comment.text}</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">${this._comments.comment.author}</span>
-                    <span class="film-details__comment-day">${this._comments.comment.date}</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>
-            </ul>
-            <div class="film-details__new-comment">
-              <div for="add-emoji" class="film-details__add-emoji-label"></div>
-    
-              <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-              </label>
-    
-              <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-    
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-    
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
-                <label class="film-details__emoji-label" for="emoji-gpuke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-    
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
-              </div>
-            </div>
-          </section>
-        </div>
-      </form>
-    </section>`;
+      </form>`;
   }
 }

@@ -45,12 +45,13 @@ const genres = new Set([`Horror`, `Comedy`, `Romance`, `Fantasy`, `Drama`, `Cart
 const description = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
 const posters = [`./images/posters/made-for-each-other.png`, `./images/posters/popeye-meets-sinbad.png`, `./images/posters/sagebrush-trail.jpg`, `./images/posters/santa-claus-conquers-the-martians.jpg`, `./images/posters/the-dance-of-life.jpg`, `./images/posters/the-great-flamarion.jpg`, `./images/posters/the-man-with-the-golden-arm.jpg`];
 const film = () => ({
+  id: getrandomInteger(1050),
   name: Array.from(namesFilm)[getrandomInteger(4)],
   originalName: Array.from(namesFilm)[getrandomInteger(14)],
   director: Array.from(namesPiples)[getrandomInteger(4)],
   genres: getRandomElements(Array.from(genres), getrandomInteger(4)),
   rating: getRandomRating(),
-  ownrating: getrandomInteger(10),
+  ownrating: getrandomInteger(9),
   runtime: getRandomTime(),
   description: descriptionFilm(description),
   watchlist: Boolean(Math.round(Math.random())),
@@ -62,15 +63,14 @@ const film = () => ({
   country: Array.from(countries)[Math.floor(Math.random() * 4)],
   age: `${getrandomInteger(21)}+`,
   poster: posters[getrandomInteger(6)],
-  comments: {
-    amount: getrandomInteger(10),
-    comment: {
-      text: descriptionFilm(description),
-      author: Array.from(namesPiples)[getrandomInteger(4)],
-      date: `${getrandomInteger(10, 2)} days ago`,
-      emojis: `./images/emoji/smile.png`,
-    }
+  comments: [
+    {
+    emojis: `smile`,
+    text: descriptionFilm(description),
+    author: Array.from(namesPiples)[getrandomInteger(4)],
+    date: `${getrandomInteger(10, 2)} days ago`,
   }
+]
 });
 
 const titles = [`Top rated`, `Most commented`];
