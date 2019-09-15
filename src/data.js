@@ -68,7 +68,7 @@ const film = () => ({
     emojis: `smile`,
     text: descriptionFilm(description),
     author: Array.from(namesPiples)[getrandomInteger(4)],
-    date: `${getrandomInteger(10, 2)} days ago`,
+    date: getRandomDate(),
   }
 ]
 });

@@ -2,6 +2,7 @@ import {FilmBaseComponent} from './film-base-component.js';
 import {descriptionTrim, render, Position} from '../utils';
 import FilmCardControls from './film-card-controls';
 import FilmButton from './film-button';
+import moment from 'moment'
 
 export class Film extends FilmBaseComponent {
   constructor(params, onEscKeyDown, renderFilmDetails, onDataChange) {
@@ -45,7 +46,7 @@ export class Film extends FilmBaseComponent {
     <h3 class="film-card__title">${this._name}</h3>
     <p class="film-card__rating">${this._rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${this._releaseDate}</span>
+      <span class="film-card__year">${moment(this._releaseDate).format('YYYY')}</span>
       <span class="film-card__duration">${this._runtime}</span>
       <span class="film-card__genre">${this._genres[0]}</span>
     </p>

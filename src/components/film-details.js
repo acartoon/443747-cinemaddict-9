@@ -3,8 +3,9 @@ import FormDetailsMiddle from './form-details-middle';
 import FormDetailsBottom from './form-details-bottom';
 import FormDetailsRating from './form-details-rating';
 import FilmDetailsControls from './film-details-controls';
-import {render, unrender, Position, remove} from "../utils";
+import {render, Position} from "../utils";
 import FormDetailsComments from './film-details__comments.js';
+import moment from 'moment'
 
 export class FilmDetails extends FilmBaseComponent {
   constructor(params, onEscKeyDown, onDataChange, onClosePopup, onSendMsg) {
@@ -92,7 +93,7 @@ export class FilmDetails extends FilmBaseComponent {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${new Date(this._releaseDate).toDateString()}</td>
+                  <td class="film-details__cell">${moment(this._releaseDate).format(`DD MMM YYYY`)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
