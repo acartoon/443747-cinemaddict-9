@@ -6,8 +6,6 @@ export default class FormDetailsBottom extends AbstractComponent {
   }
 
   getTemplate() {
-    return `<div class="form-details__bottom-container">
-
-    </div>`;
+    return `<div class="form-details__bottom-container"></div>`;
   }
 }

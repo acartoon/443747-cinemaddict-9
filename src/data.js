@@ -65,20 +65,27 @@ const film = () => ({
   poster: posters[getrandomInteger(6)],
   comments: [
     {
-    emojis: `smile`,
-    text: descriptionFilm(description),
-    author: Array.from(namesPiples)[getrandomInteger(4)],
-    date: getRandomDate(),
-  }
+      emojis: `./images/emoji/smile.png`,
+      text: descriptionFilm(description),
+      author: Array.from(namesPiples)[getrandomInteger(4)],
+      date: getRandomDate(),
+    },
+    {
+      emojis: `./images/emoji/smile.png`,
+      text: descriptionFilm(description),
+      author: Array.from(namesPiples)[getrandomInteger(4)],
+      date: getRandomDate(),
+    }
 ]
 });
 
 const titles = [`Top rated`, `Most commented`];
 const films = new Array(Array.from(namesFilm).length).fill(``).map(film);
+console.log(films)
 const filmslength = films.length;
 const countWatched = counterFilters(films, getCountwatched);
 
-const filters = [
+const FiltersData = [
   {
     title: `All movies`,
     count: filmslength,
@@ -101,4 +108,4 @@ const filters = [
   },
 ];
 
-export {titles, films, filters, countWatched};
+export {titles, films, FiltersData, countWatched};

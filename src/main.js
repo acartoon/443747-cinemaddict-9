@@ -1,33 +1,35 @@
 import {PageController} from './controllers/page-controller';
 import {searchTemplate} from './components/search';
-
+import Filters from "./components/filters";
+import {render} from "./utils";
+import MainNav from "./components/main-nav";
+import Stats from "./components/stats";
 import {profileTemplate} from './components/profile';
-import {filtersTemplate} from './components/filters';
-import {statsTemplate} from './components/stats';
-import {films, filters, countWatched} from './data';
+import {films, countWatched, FiltersData} from './data';
 
 const headerContainer = document.body.querySelector(`.header`);
 const mainContainer = document.body.querySelector(`.main`);
 const pageController = new PageController(mainContainer, films);
+const mainNav = new MainNav;
+const stats = new Stats;
 
 const renderComponent = (container, template, type = `beforeend`) => {
   container.insertAdjacentHTML(type, template);
 };
 
-const renderFilters = () => mainContainer.querySelector(`.main-navigation`)
-  .insertAdjacentHTML(`afterBegin`, filters.map(filtersTemplate).join(``));
-
 const profileContainer = document.createElement(`section`);
 profileContainer.classList.add(`header__profile`, `profile`);
-// nav
-const navContainer = document.createElement(`nav`);
-navContainer.classList.add(`main-navigation`);
-
 
 renderComponent(headerContainer, searchTemplate());
 renderComponent(headerContainer, profileContainer.outerHTML);
 renderComponent(headerContainer.querySelector(`.header__profile.profile`), profileTemplate(countWatched));
-renderComponent(mainContainer, navContainer.outerHTML);
-renderComponent(mainContainer.querySelector(`.main-navigation`), statsTemplate());
-renderFilters();
+
+render(mainContainer, mainNav.getElement());
+
+FiltersData.forEach(i => {
+  let filter = new Filters(i.title, i.count, i.link);
+  render(mainNav.getElement(), filter.getElement());
+});
+render(mainNav.getElement(), stats.getElement());
+
 pageController.init();

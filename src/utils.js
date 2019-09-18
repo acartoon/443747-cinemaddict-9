@@ -37,10 +37,10 @@ export const createElement = (template) => {
 
 
 export const emoji = {
-  'smile' : `smile`,
-  'sleeping' : `sleeping`,
-  'gpuke' : `puke`,
-  'angry' : `angry`,
+  'smile' : `./images/emoji/smile.png`,
+  'sleeping' : `./images/emoji/sleeping.png`,
+  'gpuke' : `./images/emoji/puke.png`,
+  'angry' : `./images/emoji/angry.png`,
 }
 
 export const Position = {

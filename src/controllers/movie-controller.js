@@ -1,10 +1,8 @@
-import {render, unrender, Position, Key} from "../utils";
+import {render, unrender, Position} from "../utils";
 import {Film} from "../components/film";
 import {Popup} from "../components/popup";
 import {FilmDetails} from "../components/film-details";
 import {cloneDeep} from 'lodash';
-import FormDetailsMiddle from '../components/form-details-middle';
-import FilmDetailsControls from '../components/film-details-controls';
 
 export default class MovieController {
   constructor(container, data, onDataChange, onChangeView, place) {
@@ -38,8 +36,12 @@ export default class MovieController {
 
   init() {
     render(this._container, this._filmComponent.getElement(), this._place);
+    let i = 0;
+    i++
 
     if(document.querySelector(`.film-details`)) {
+      console.log(this._data)
+      console.log(i)
       const popup = document.querySelector(`.film-details`);
       this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChange.bind(this), this._onClosePopup.bind(this), this._onSendMsg.bind(this));
       popup.replaceChild(this._filmDetails.getElement(), popup.lastChild);
@@ -61,29 +63,35 @@ export default class MovieController {
   };
 
     _onSendMsg(evt) {
-    if (evt.key == `Enter` && (event.ctrlKey || event.metaKey)) {
+    if (evt.key == `Enter` && (evt.ctrlKey || evt.metaKey)) {
       console.log(`enter`)
       document.removeEventListener(`keydown`, this._onSendMsg);
     }  
   }
 
-  onDataChange(data) {
+  onDataChange(data, id) {
     this._initTmpData();
     
-    if(data === `watchlist`) {
+    if(data === null) {
+     this._tmpData.comments[id] = null;
+      this._tmpData.comments = [...this._tmpData.comments.slice(0, id), ...this._tmpData.comments.slice(id + 1)];
+    }
+    else if(data === `watchlist`) {
       this._tmpData.watchlist = !this._tmpData.watchlist;
     }
     else if (data === `watched`) {
       this._tmpData.watched = !this._tmpData.watched;
       this._tmpData.ownrating = null;
     }
-    else if (data === `favorite`){
+    else if (data === `favorite`) {
       this._tmpData.favorite = !this._tmpData.favorite
     }
     else if (typeof data === `number`) {
-      console.log(data)
-
       this._tmpData.ownrating = data;
+    }
+    else if (typeof data === `object`) {
+      this._tmpData.comments.unshift(data);
+      console.log(this._tmpData.comments)
     }
     
     this._onDataChange(this._tmpData, this._data);

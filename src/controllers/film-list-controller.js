@@ -1,29 +1,27 @@
-import {NoResult} from '../components/no-result';
-import {Sort} from "../components/sort";
-import {FilmListController} from "./film-list-controller";
-import Satistic from "../components/statistics";
 import MovieController from "./movie-controller";
 import {Films} from "../components/films";
 import {FilmsList} from "../components/films-list";
 import {render, unrender, Position} from "../utils";
 import {BtnShowMore} from "../components/btn-show-more";
+import {NoResult} from '../components/no-result';
+import {Sort} from "../components/sort";
 
-export class PageController {
-  constructor(container, films, filters) {
-    this._filters = filters;
+export class FilmListController {
+  constructor(container, films) {
     this._sort = new Sort();
     this._noResult = new NoResult();
-    this._container = container;
-    this._films = films;
     this._btn = new BtnShowMore();
     this._filmsContainer = new Films();
     this._allFilmsList = new FilmsList(false, `All movies. Upcoming`);
     this._topRatedFilmsList = new FilmsList(true, `Top rated`);
     this._mostCommentedFilmsList = new FilmsList(true, `Most commented`);
+    this._container = container;
+    this._films = films;
     this._STEP_TO_RENDER = 5;
     this._filmsToRender = '';
     this._subscriptions = [];
     this._onDataChange = this._onDataChange.bind(this);
+
   }
 
   _onMovieController(container, data) {
@@ -128,14 +126,13 @@ export class PageController {
 
   _onDataChange(newData, oldData) {
     const index = this._films.findIndex((it) => it.id === oldData.id);
-    console.log(this._films[index])
     this._films[index] = newData;
+    console.log(this._films[index].id)
     console.log(index)
     this._renderFilms(index);
   }
 
   _renderFilms(index) {
-    console.log(index)
     let container = this._filmsContainer.getElement().querySelector(`.films-list__container`);
     const movie = new MovieController(container, this._films[index], this._onDataChange, this._onChangeView.bind(this), index);
     movie.init()
@@ -156,10 +153,11 @@ export class PageController {
     let container = this._filmsContainer.getElement().querySelector(`.films-list__container`);
     container.innerHTML = ``;
     data.slice(0, this._filmsToRender).forEach((item) => new MovieController(container, item, this._onDataChange).init());
-  }
 
+
+  }
+  
     _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
-
 }

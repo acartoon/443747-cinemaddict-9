@@ -4,7 +4,7 @@ import FormDetailsBottom from './form-details-bottom';
 import FormDetailsRating from './form-details-rating';
 import FilmDetailsControls from './film-details-controls';
 import {render, Position} from "../utils";
-import FormDetailsComments from './film-details__comments.js';
+import CommentController from '../controllers/comment-controller.js';
 import moment from 'moment'
 
 export class FilmDetails extends FilmBaseComponent {
@@ -16,7 +16,7 @@ export class FilmDetails extends FilmBaseComponent {
     this._onSendMsg = onSendMsg;
     this._formDetailsMiddle = new FormDetailsMiddle();
     this._formDetailsBottom = new FormDetailsBottom();
-    this._formDetailsComments = new FormDetailsComments(this._comments, this._onSendMsg, this._onEscKeyDown);
+    this._commentController = new CommentController(this._formDetailsBottom.getElement(), this._comments, this._onEscKeyDown, this._onDataChange);
     this._formDetailsRating = new FormDetailsRating(this._poster, this._name, this._ownrating, this._onDataChange);
     this._filmDetailsControls = new FilmDetailsControls(this._watched, this._watchlist, this._favorite, this._onDataChange);
 
@@ -26,7 +26,7 @@ export class FilmDetails extends FilmBaseComponent {
   _init() {
     this._renderControls();
     render(this.getElement(), this._formDetailsBottom.getElement());
-    render(this._formDetailsBottom.getElement(), this._formDetailsComments.getElement());
+    this._commentController.init();
 
     if(this.watched) {
       this._renderFormDetailsRating();
