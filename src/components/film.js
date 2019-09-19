@@ -5,10 +5,11 @@ import FilmButton from './film-button';
 import moment from 'moment'
 
 export class Film extends FilmBaseComponent {
-  constructor(params, onEscKeyDown, renderFilmDetails, onDataChange) {
+  constructor(params, onEscKeyDown, renderFilmDetails, onDataChange, onChangeView) {
     super(params);
     this._onEscKeyDown = onEscKeyDown;
     this._renderPopup = renderFilmDetails;
+    this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
     this._filmCardControls = new FilmCardControls;
     this._watchlistControls = new FilmButton(`watchlist`, `Add to watchlist`, `film-card__controls-item--add-to-watchlist`, this._watchlist, this._onDataChange);
@@ -31,6 +32,7 @@ export class Film extends FilmBaseComponent {
       .addEventListener(`click`, () => {
         this._renderPopup();
         document.addEventListener(`keydown`, this._onEscKeyDown);
+        console.log(this._onChangeView)
       });
   };
 

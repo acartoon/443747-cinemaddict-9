@@ -9,7 +9,7 @@ import {films, countWatched, FiltersData} from './data';
 
 const headerContainer = document.body.querySelector(`.header`);
 const mainContainer = document.body.querySelector(`.main`);
-const pageController = new PageController(mainContainer, films);
+const pageController = new PageController(mainContainer);
 const mainNav = new MainNav;
 const stats = new Stats;
 
@@ -32,4 +32,4 @@ FiltersData.forEach(i => {
 });
 render(mainNav.getElement(), stats.getElement());
 
-pageController.init();
+pageController.show(films);

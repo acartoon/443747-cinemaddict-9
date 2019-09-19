@@ -4,16 +4,22 @@ import {Popup} from "../components/popup";
 import {FilmDetails} from "../components/film-details";
 import {cloneDeep} from 'lodash';
 
+const Mode = {
+  POPUP: `popup`,
+  DEFAULT: `default`,
+};
+
 export default class MovieController {
   constructor(container, data, onDataChange, onChangeView, place) {
     this._container = container;
     this._place = place;
     this._data = data;
-    this._onDataChange = onDataChange;
+    this._onDataChangeBig = onDataChange;
     this._onChangeView = onChangeView;
-    this._filmComponent = new Film(this._data, this._onEscKeyDown.bind(this), this._renderFilmDetails.bind(this), this.onDataChange.bind(this));
+    this.onDataChange = this.onDataChange.bind(this)
+    this._filmComponent = new Film(this._data, this._onEscKeyDown.bind(this), this._renderFilmDetails.bind(this), this.onDataChange, this._onChangeView);
     this._popup = new Popup;
-    this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChange.bind(this), this._onClosePopup.bind(this), this._onSendMsg.bind(this));
+    this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChange, this._onClosePopup.bind(this), this._onSendMsg.bind(this));
     
     this._tmpData = null;
     this._formDetailsRating = null;
@@ -36,12 +42,8 @@ export default class MovieController {
 
   init() {
     render(this._container, this._filmComponent.getElement(), this._place);
-    let i = 0;
-    i++
-
     if(document.querySelector(`.film-details`)) {
-      console.log(this._data)
-      console.log(i)
+      console.log(`popop`)
       const popup = document.querySelector(`.film-details`);
       this._filmDetails = new FilmDetails(this._data, this._onEscKeyDown.bind(this), this.onDataChange.bind(this), this._onClosePopup.bind(this), this._onSendMsg.bind(this));
       popup.replaceChild(this._filmDetails.getElement(), popup.lastChild);
@@ -51,7 +53,6 @@ export default class MovieController {
   _renderFilmDetails() {
     render(document.body, this._popup.getElement(), Position.BEFOREEND);
     render(this._popup.getElement(), this._filmDetails.getElement(), Position.BEFOREEND);
-    this._onChangeView();
   };
 
   _onEscKeyDown(evt) {
@@ -64,7 +65,6 @@ export default class MovieController {
 
     _onSendMsg(evt) {
     if (evt.key == `Enter` && (evt.ctrlKey || evt.metaKey)) {
-      console.log(`enter`)
       document.removeEventListener(`keydown`, this._onSendMsg);
     }  
   }
@@ -78,6 +78,7 @@ export default class MovieController {
     }
     else if(data === `watchlist`) {
       this._tmpData.watchlist = !this._tmpData.watchlist;
+      console.log(this._tmpData.id)
     }
     else if (data === `watched`) {
       this._tmpData.watched = !this._tmpData.watched;
@@ -94,12 +95,13 @@ export default class MovieController {
       console.log(this._tmpData.comments)
     }
     
-    this._onDataChange(this._tmpData, this._data);
+    this._onDataChangeBig(this._tmpData, this._data);
     this._resetTmpData();
   }
 
   setDefaultView() {
     if (document.body.contains(this._filmDetails.getElement())) {
+      console.log(`contains`)
       unrender(this._filmDetails.getElement());
       this._filmDetails.removeElement()
     }
